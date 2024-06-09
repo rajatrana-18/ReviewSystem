@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b3348ae33f.js" crossorigin="anonymous"></script>
+    <style>
+        .card-custom {
+            margin: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .card-custom .card-body {
+            padding: 20px;
+        }
+
+        .card-custom h5 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card-custom p {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        button{
+            margin: 2%;
+            border: none;
+        }
+
+        button i{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .feedback{
+            background-color: blue;
+            color: white;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <% if(getPendingReviews.length === 0) { %>
+                <h1>No reviews pending</h1>
+            <%} %>
+            <% getPendingReviews.forEach((data)=> { %>
+            <div class="col-md-4">
+                <div class="card card-custom">     
+                    <div class="card-body">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= data.revieweeName %></h5>
+                                <textarea placeholder="Write Feedback"></textarea>
+                                <button type="button" class="feedback" data-id="<%= data._id %>">
+                                    <i class="fa-solid fa-pen-to-square">   Submit Feedback</i>
+                                </button>
+                            </div>  
+                    </div>          
+                </div>          
+            </div>
+            <%})%>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.querySelectorAll('.feedback').forEach(button => {
+            button.addEventListener('click', async () => {
+                const feedbackId = button.dataset.id;
+                const feedbackText = button.previousElementSibling.value;
+                console.log(feedbackId);
+                const response = await fetch(`/api/home/feedback?id=${feedbackId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ feedback: feedbackText })
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('try again');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
